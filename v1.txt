@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Agendamento v1.0.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { overflow: hidden; }
+    .gradient-bg { background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 100%); }
+    .card-shadow { box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade { animation: fadeIn 0.3s ease-out forwards; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="root" class="h-full w-full"><!-- Modal Login Inicial -->
+   <div id="modal-login-inicio" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade">
+     <div class="text-center mb-6">
+      <h3 class="text-2xl font-bold text-gray-800">Sistema de Agendamento</h3>
+      <p class="text-gray-500 text-sm mt-2">Equipamentos Audiovisuais</p>
+      <p class="text-gray-400 text-xs mt-3">v1.0.0</p>
+     </div>
+     <div class="space-y-3"><button id="btn-login-professor" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all text-sm">👨‍🏫 Sou Professor</button> <button id="btn-login-gestao" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all text-sm">📊 Gestão</button> <button id="btn-login-admin" class="w-full py-3 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-xl transition-all text-sm">🔐 Administrador</button>
+     </div>
+    </div>
+   </div><!-- Modal Login Professor -->
+   <div id="modal-login-professor" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade"><button onclick="voltarInicio()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Login Professor</h3>
+      <p class="text-gray-500 text-sm mt-1">Acesso ao agendamento</p>
+     </div>
+     <form id="form-login-professor" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Email</label> <input type="email" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="seu@email.com">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Senha</label> <input type="password" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="••••••••">
+      </div><button type="submit" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all">Entrar</button>
+     </form>
+    </div>
+   </div><!-- Modal Login Gestão -->
+   <div id="modal-login-gestao" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade"><button onclick="voltarInicio()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Login Gestão</h3>
+      <p class="text-gray-500 text-sm mt-1">Credenciais de acesso</p>
+     </div>
+     <form id="form-login-gestao" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Usuário</label> <input type="text" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="gestao">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Senha</label> <input type="password" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="••••••••">
+      </div><button type="submit" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-all">Entrar</button>
+     </form>
+    </div>
+   </div><!-- Modal Login Admin -->
+   <div id="modal-login-admin" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade"><button onclick="voltarInicio()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Login Administrador</h3>
+      <p class="text-gray-500 text-sm mt-1">Credenciais de acesso</p>
+     </div>
+     <form id="form-login-admin" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Usuário</label> <input type="text" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500" placeholder="admin">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Senha</label> <input type="password" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-500" placeholder="••••••••">
+      </div>
+      <div id="admin-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg"></div><button type="submit" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white font-semibold rounded-xl transition-all">Entrar</button>
+     </form>
+    </div>
+   </div><!-- Modal Resetar Senha Admin -->
+   <div id="modal-resetar-senha-admin" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade max-h-screen overflow-y-auto"><button onclick="fecharModalResetarSenha()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Resetar Senha Admin</h3>
+     </div>
+     <form id="form-resetar-senha-admin" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Senha Atual</label> <input type="password" id="senha-atual-admin" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="••••••••">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha</label> <input type="password" id="nova-senha-admin" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="••••••••">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Confirmar Nova Senha</label> <input type="password" id="confirma-senha-admin" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="••••••••">
+      </div>
+      <div id="resetar-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <div id="resetar-sucesso" class="hidden text-sm text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="fecharModalResetarSenha()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button type="submit" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl">Alterar</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Modal Adicionar Usuário -->
+   <div id="modal-adicionar-usuario" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade max-h-screen overflow-y-auto"><button onclick="fecharModalAdicionarUsuario()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Adicionar Usuário com Privilégios</h3>
+     </div>
+     <form id="form-adicionar-usuario" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Nome</label> <input type="text" id="novo-nome-usuario" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Nome do usuário">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Email</label> <input type="email" id="novo-email-usuario" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="email@exemplo.com">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Usuário</label> <input type="text" id="novo-user-usuario" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="nome_usuario">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Senha</label> <input type="password" id="nova-senha-usuario" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="••••••••">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Nível de Acesso</label> <select id="nivel-acesso-usuario" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"> <option value="">Selecionar nível</option> <option value="admin">👨‍💼 Administrador</option> <option value="gestao">📊 Gestão</option> <option value="supervisor">👀 Supervisor</option> </select>
+      </div>
+      <div id="permissoes-section" class="hidden bg-blue-50 p-4 rounded-lg border border-blue-200"><label class="block text-sm font-semibold text-gray-700 mb-3">🔑 Permissões</label>
+       <div class="space-y-2"><label class="flex items-center gap-2 cursor-pointer"> <input type="checkbox" id="perm-resetar-senha" class="w-4 h-4 text-green-600 rounded"> <span class="text-sm text-gray-700">Resetar Senha</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="checkbox" id="perm-deletar-usuario" class="w-4 h-4 text-green-600 rounded"> <span class="text-sm text-gray-700">Deletar Usuário</span> </label> <label class="flex items-center gap-2 cursor-pointer"> <input type="checkbox" id="perm-agendar" class="w-4 h-4 text-green-600 rounded"> <span class="text-sm text-gray-700">Agendar</span> </label>
+       </div>
+      </div>
+      <div id="adicionar-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <div id="adicionar-sucesso" class="hidden text-sm text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="fecharModalAdicionarUsuario()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button type="submit" class="flex-1 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl">Adicionar</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Modal Importar CSV -->
+   <div id="modal-importar-csv" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade max-h-screen overflow-y-auto"><button onclick="fecharModalImportarCSV()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Importar Professores</h3>
+      <p class="text-gray-500 text-xs mt-2">Arquivo CSV</p>
+     </div>
+     <form id="form-importar-csv" class="space-y-4">
+      <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+       <p class="text-xs text-gray-700 font-semibold mb-2">📋 Formatos aceitos:</p>
+       <p class="text-xs text-gray-600"><strong>Com vírgula:</strong> nome,email</p>
+       <p class="text-xs text-gray-600"><strong>Com ponto-vírgula:</strong> nome;email</p>
+       <p class="text-xs text-gray-600 mt-1">Ex:</p>
+       <p class="text-xs text-gray-500">João Silva;joao@email.com</p>
+       <p class="text-xs text-gray-500">Maria Santos;maria@email.com</p>
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-2">Arquivo CSV</label> <input type="file" id="arquivo-csv" accept=".csv" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm">
+      </div>
+      <div id="csv-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <div id="csv-sucesso" class="hidden text-sm text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></div>
+      <div id="csv-processando" class="hidden text-sm text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
+       ⏳ Importando...
+      </div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="fecharModalImportarCSV()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button type="submit" id="btn-enviar-csv" class="flex-1 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-xl">Importar</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Modal Resetar Senha Professor -->
+   <div id="modal-resetar-prof" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade"><button onclick="fecharModalResetarProf()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Resetar Senha</h3>
+      <p id="reset-prof-name" class="text-gray-500 text-sm mt-1"></p>
+     </div>
+     <form id="form-resetar-prof" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Nova Senha</label> <input type="text" id="nova-senha-prof" placeholder="Digite a nova senha" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div id="resetar-prof-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <div id="resetar-prof-sucesso" class="hidden text-sm text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="fecharModalResetarProf()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button type="submit" class="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl">Confirmar</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- Modal Deletar Professor -->
+   <div id="modal-deletar-prof" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade">
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Deletar Professor</h3>
+      <p id="deletar-prof-name" class="text-gray-500 text-sm mt-2"></p>
+     </div>
+     <div class="bg-red-50 p-4 rounded-lg border border-red-200 mb-6">
+      <p class="text-sm text-red-700">⚠️ Esta ação não pode ser desfeita!</p>
+     </div>
+     <div class="flex gap-3"><button onclick="fecharModalDeletarProf()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button onclick="confirmarDeletarProf()" class="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl">Deletar</button>
+     </div>
+    </div>
+   </div><!-- Modal Agendar Professor -->
+   <div id="modal-agendar-prof" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl p-8 max-w-sm w-full animate-fade max-h-screen overflow-y-auto"><button onclick="fecharModalAgendarProf()" class="mb-4 text-gray-500 hover:text-gray-700">← Voltar</button>
+     <div class="text-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Agendar Equipamentos</h3>
+      <p id="agendar-prof-name" class="text-gray-500 text-sm mt-1"></p>
+     </div>
+     <form id="form-agendar-prof" class="space-y-4">
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Data</label> <input type="date" id="agendar-data" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Quantidade de Aulas</label> <input type="number" id="agendar-aulas" min="1" max="10" value="1" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500">
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Projetor</label> <select id="agendar-projetor" required class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"> <option value="">Selecionar projetor</option> <option value="1">Projetor 1</option> <option value="2">Projetor 2</option> <option value="3">Projetor 3</option> </select>
+      </div>
+      <div><label class="block text-sm font-medium text-gray-700 mb-1">Som (Opcional)</label> <select id="agendar-som" class="w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500"> <option value="">Sem som</option> <option value="Portátil">Som Portátil</option> <option value="Fixo">Som Fixo</option> </select>
+      </div>
+      <div id="agendar-error" class="hidden text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200"></div>
+      <div id="agendar-sucesso" class="hidden text-sm text-emerald-600 bg-emerald-50 p-3 rounded-lg border border-emerald-200"></div>
+      <div class="flex gap-3 pt-4"><button type="button" onclick="fecharModalAgendarProf()" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl">Cancelar</button> <button type="submit" class="flex-1 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl">Agendar</button>
+      </div>
+     </form>
+    </div>
+   </div><!-- App Container -->
+   <div id="app-container" class="hidden h-full w-full flex flex-col">
+    <div class="gradient-bg h-full w-full overflow-auto p-4 md:p-6 flex flex-col">
+     <div class="absolute top-4 right-4 z-40 flex items-center gap-3">
+      <div class="bg-white/20 backdrop-blur text-white px-4 py-2 rounded-lg text-sm font-medium">
+       <span id="user-status">Usuário</span>
+      </div><button id="btn-logout" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all text-sm font-medium"> 🚪 Sair </button>
+     </div>
+     <header class="text-center mb-8 pt-4">
+      <h1 class="text-4xl font-bold text-white mb-2">Sistema de Agendamento</h1>
+      <p class="text-blue-200">Equipamentos Audiovisuais</p>
+     </header><!-- Admin Section -->
+     <div id="admin-section" class="hidden max-w-7xl mx-auto w-full">
+      <div class="bg-white rounded-2xl card-shadow p-6 mb-6 animate-fade">
+       <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+         <h2 class="text-lg font-semibold text-gray-800">🔐 Segurança</h2>
+        </div>
+        <div class="flex gap-2"><button id="btn-resetar-senha-admin" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-medium">🔑 Resetar Senha</button> <button id="btn-adicionar-usuario" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium">👤 Adicionar Usuário</button> <button id="btn-importar-csv" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium">📥 Importar CSV</button>
+        </div>
+       </div>
+      </div>
+      <div class="grid lg:grid-cols-3 gap-6">
+       <div class="bg-white rounded-2xl card-shadow p-6 animate-fade">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">👨‍🏫 Professores</h2><span id="contador-professores" class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium mb-4 inline-block">0 professores</span>
+        <div id="lista-professores" class="space-y-3 max-h-96 overflow-y-auto">
+         <p class="text-center text-gray-400 text-sm">Nenhum professor</p>
+        </div>
+       </div>
+       <div class="bg-white rounded-2xl card-shadow p-6 animate-fade lg:col-span-2">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">📋 Agendamentos</h2>
+        <div class="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-200">
+         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3"><input type="text" id="filtro-professor-admin" placeholder="🔍 Nome do professor" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"> <select id="filtro-mes-admin" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"> <option value="">📅 Todos os meses</option> <option value="1">Janeiro</option> <option value="2">Fevereiro</option> <option value="3">Março</option> <option value="4">Abril</option> <option value="5">Maio</option> <option value="6">Junho</option> <option value="7">Julho</option> <option value="8">Agosto</option> <option value="9">Setembro</option> <option value="10">Outubro</option> <option value="11">Novembro</option> <option value="12">Dezembro</option> </select> <input type="date" id="filtro-data-admin" class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+         </div>
+         <div class="flex gap-2"><button onclick="aplicarFiltrosAdmin()" class="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all">🔎 Filtrar</button> <button onclick="limparFiltrosAdmin()" class="flex-1 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 text-sm font-medium rounded-lg transition-all">🔄 Limpar</button>
+         </div>
+        </div><span id="contador-admin" class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm font-medium mb-4 inline-block">0 registros</span>
+        <div id="lista-agendamentos-admin" class="space-y-4 max-h-96 overflow-y-auto">
+         <p class="text-center text-gray-400 text-sm">Nenhum agendamento</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- Professor Section -->
+     <div id="professor-section" class="hidden max-w-7xl mx-auto w-full">
+      <div class="bg-white rounded-2xl card-shadow p-6 animate-fade">
+       <h2 class="text-2xl font-bold text-gray-800 mb-4">👨‍🏫 Meus Agendamentos</h2>
+       <div id="lista-prof-agendamentos" class="space-y-4">
+        <p class="text-center text-gray-400">Nenhum agendamento</p>
+       </div>
+      </div>
+     </div><!-- Gestão Section -->
+     <div id="gestao-section" class="hidden max-w-7xl mx-auto w-full">
+      <div class="bg-white rounded-2xl card-shadow p-6 animate-fade">
+       <h2 class="text-2xl font-bold text-gray-800 mb-4">📊 Gestão de Agendamentos</h2>
+       <div id="lista-gestao-agendamentos" class="space-y-4">
+        <p class="text-center text-gray-400">Nenhum agendamento</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    let todosOsDados = [];
+    let agendamentos = [];
+    let usuarioLogado = null;
+    let tipoUsuario = null;
+    let agendamentosFiltrados = [];
+    let senhaAdminAtual = 'taro';
+    let usuariosAdicionados = [];
+    let professorSelecionado = null;
+    let senhasProf = {};
+    const nomesMeses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+
+    function voltarInicio() {
+      document.getElementById('modal-login-professor').classList.add('hidden');
+      document.getElementById('modal-login-gestao').classList.add('hidden');
+      document.getElementById('modal-login-admin').classList.add('hidden');
+      document.getElementById('modal-login-inicio').classList.remove('hidden');
+    }
+
+    function fecharModalResetarSenha() {
+      document.getElementById('modal-resetar-senha-admin').classList.add('hidden');
+      document.getElementById('form-resetar-senha-admin').reset();
+      document.getElementById('resetar-error').classList.add('hidden');
+      document.getElementById('resetar-sucesso').classList.add('hidden');
+    }
+
+    function fecharModalAdicionarUsuario() {
+      document.getElementById('modal-adicionar-usuario').classList.add('hidden');
+      document.getElementById('form-adicionar-usuario').reset();
+      document.getElementById('adicionar-error').classList.add('hidden');
+      document.getElementById('adicionar-sucesso').classList.add('hidden');
+      document.getElementById('permissoes-section').classList.add('hidden');
+    }
+
+    function fecharModalImportarCSV() {
+      document.getElementById('modal-importar-csv').classList.add('hidden');
+      document.getElementById('form-importar-csv').reset();
+      document.getElementById('csv-error').classList.add('hidden');
+      document.getElementById('csv-sucesso').classList.add('hidden');
+      document.getElementById('csv-processando').classList.add('hidden');
+    }
+
+    function fecharModalResetarProf() {
+      document.getElementById('modal-resetar-prof').classList.add('hidden');
+      document.getElementById('form-resetar-prof').reset();
+      document.getElementById('resetar-prof-error').classList.add('hidden');
+      document.getElementById('resetar-prof-sucesso').classList.add('hidden');
+      professorSelecionado = null;
+    }
+
+    function fecharModalDeletarProf() {
+      document.getElementById('modal-deletar-prof').classList.add('hidden');
+      professorSelecionado = null;
+    }
+
+    function fecharModalAgendarProf() {
+      document.getElementById('modal-agendar-prof').classList.add('hidden');
+      document.getElementById('form-agendar-prof').reset();
+      document.getElementById('agendar-error').classList.add('hidden');
+      document.getElementById('agendar-sucesso').classList.add('hidden');
+      professorSelecionado = null;
+    }
+
+    function abrirResetarProf(prof) {
+      professorSelecionado = prof;
+      document.getElementById('reset-prof-name').textContent = prof.nome;
+      document.getElementById('modal-resetar-prof').classList.remove('hidden');
+    }
+
+    function abrirDeletarProf(prof) {
+      professorSelecionado = prof;
+      document.getElementById('deletar-prof-name').textContent = prof.nome;
+      document.getElementById('modal-deletar-prof').classList.remove('hidden');
+    }
+
+    function abrirAgendarProf(prof) {
+      professorSelecionado = prof;
+      document.getElementById('agendar-prof-name').textContent = prof.nome;
+      document.getElementById('modal-agendar-prof').classList.remove('hidden');
+    }
+
+    async function confirmarDeletarProf() {
+      if (!professorSelecionado) return;
+      const result = await window.dataSdk.delete(professorSelecionado);
+      if (result.isOk) {
+        fecharModalDeletarProf();
+      }
+    }
+
+    function limparFiltrosAdmin() {
+      document.getElementById('filtro-professor-admin').value = '';
+      document.getElementById('filtro-mes-admin').value = '';
+      document.getElementById('filtro-data-admin').value = '';
+      aplicarFiltrosAdmin();
+    }
+
+    function aplicarFiltrosAdmin() {
+      const nomeProfessor = document.getElementById('filtro-professor-admin').value.toLowerCase().trim();
+      const mes = document.getElementById('filtro-mes-admin').value;
+      const dataEspecifica = document.getElementById('filtro-data-admin').value;
+
+      agendamentosFiltrados = agendamentos.filter(a => {
+        let passa = true;
+        if (nomeProfessor && !a.professor.toLowerCase().includes(nomeProfessor)) passa = false;
+        if (mes && a.mes != mes) passa = false;
+        if (dataEspecifica && a.data !== dataEspecifica) passa = false;
+        return passa;
+      });
+
+      renderAgendamentosAdminFiltrados();
+    }
+
+    function renderAgendamentosAdminFiltrados() {
+      const lista = document.getElementById('lista-agendamentos-admin');
+      document.getElementById('contador-admin').textContent = `${agendamentosFiltrados.length} agendamento(s)`;
+      
+      if (agendamentosFiltrados.length === 0) {
+        lista.innerHTML = '<p class="text-center text-gray-400 text-sm">Nenhum agendamento encontrado</p>';
+        return;
+      }
+
+      const agrupadosPorMes = {};
+      agendamentosFiltrados.forEach(a => {
+        const mes = a.mes || new Date(a.data + 'T12:00:00').getMonth() + 1;
+        if (!agrupadosPorMes[mes]) agrupadosPorMes[mes] = [];
+        agrupadosPorMes[mes].push(a);
+      });
+
+      lista.innerHTML = Object.keys(agrupadosPorMes).sort((a,b) => a-b).map(mes => `
+        <div>
+          <h3 class="text-sm font-bold text-emerald-600 mb-2">📅 ${nomesMeses[mes-1]}</h3>
+          <div class="space-y-2">
+            ${agrupadosPorMes[mes].map(a => `
+              <div class="bg-gray-50 rounded-lg p-4 border border-gray-100">
+                <p class="font-semibold text-gray-800">${a.professor}</p>
+                <p class="text-sm text-gray-600">📅 ${a.data} | 🎓 ${a.aulas} aulas</p>
+                <p class="text-sm text-gray-600">📽️ Projetor ${a.projetor}${a.som ? ' | 🔊 Som ' + a.som : ''}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        todosOsDados = data || [];
+        agendamentos = todosOsDados.filter(d => d.professor && d.data);
+
+        if (tipoUsuario === 'admin') {
+          const profs = todosOsDados.filter(d => d.tipo === 'professor' && d.nome);
+          document.getElementById('contador-professores').textContent = `${profs.length} professor(es)`;
+          document.getElementById('lista-professores').innerHTML = profs.length === 0 
+            ? '<p class="text-center text-gray-400 text-sm">Nenhum professor</p>'
+            : profs.map(p => `
+              <div class="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                <p class="font-semibold text-gray-800">${p.nome}</p>
+                <p class="text-xs text-gray-500 mb-3">${p.email}</p>
+                <div class="flex gap-2">
+                  <button onclick="abrirResetarProf(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="flex-1 text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 rounded">🔑</button>
+                  <button onclick="abrirAgendarProf(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="flex-1 text-xs bg-green-500 hover:bg-green-600 text-white py-1 rounded">📅</button>
+                  <button onclick="abrirDeletarProf(${JSON.stringify(p).replace(/"/g, '&quot;')})" class="flex-1 text-xs bg-red-500 hover:bg-red-600 text-white py-1 rounded">🗑️</button>
+                </div>
+              </div>
+            `).join('');
+          
+          aplicarFiltrosAdmin();
+        }
+      }
+    };
+
+    async function initSDK() {
+      try {
+        const result = await window.dataSdk.init(dataHandler);
+        if (!result.isOk) console.error('Erro ao inicializar SDK');
+      } catch (e) {
+        console.error('SDK Error:', e);
+      }
+    }
+
+    document.getElementById('btn-login-professor').addEventListener('click', () => {
+      document.getElementById('modal-login-inicio').classList.add('hidden');
+      document.getElementById('modal-login-professor').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-login-gestao').addEventListener('click', () => {
+      document.getElementById('modal-login-inicio').classList.add('hidden');
+      document.getElementById('modal-login-gestao').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-login-admin').addEventListener('click', () => {
+      document.getElementById('modal-login-inicio').classList.add('hidden');
+      document.getElementById('modal-login-admin').classList.remove('hidden');
+    });
+
+    document.getElementById('form-login-professor').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input');
+      const email = inputs[0].value.trim();
+      usuarioLogado = email;
+      tipoUsuario = 'professor';
+      document.getElementById('modal-login-professor').classList.add('hidden');
+      document.getElementById('app-container').classList.remove('hidden');
+      document.getElementById('user-status').textContent = `👨‍🏫 ${email}`;
+      document.getElementById('professor-section').classList.remove('hidden');
+    });
+
+    document.getElementById('form-login-gestao').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input');
+      const user = inputs[0].value.trim();
+      if (user === 'gestao') {
+        usuarioLogado = user;
+        tipoUsuario = 'gestao';
+        document.getElementById('modal-login-gestao').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        document.getElementById('user-status').textContent = '📊 Gestão';
+        document.getElementById('gestao-section').classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('form-login-admin').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const inputs = e.target.querySelectorAll('input');
+      const user = inputs[0].value.trim();
+      const pass = inputs[1].value;
+      if (user === 'admin' && pass === senhaAdminAtual) {
+        usuarioLogado = 'Admin';
+        tipoUsuario = 'admin';
+        document.getElementById('modal-login-admin').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        document.getElementById('user-status').textContent = '🔐 Administrador';
+        document.getElementById('admin-section').classList.remove('hidden');
+        aplicarFiltrosAdmin();
+      } else {
+        document.getElementById('admin-error').textContent = '❌ Credenciais inválidas!';
+        document.getElementById('admin-error').classList.remove('hidden');
+      }
+    });
+
+    document.getElementById('btn-resetar-senha-admin').addEventListener('click', () => {
+      document.getElementById('modal-resetar-senha-admin').classList.remove('hidden');
+    });
+
+    document.getElementById('form-resetar-senha-admin').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const senhaAtual = document.getElementById('senha-atual-admin').value;
+      const novaSenha = document.getElementById('nova-senha-admin').value;
+      const confirmaSenha = document.getElementById('confirma-senha-admin').value;
+      const erroDiv = document.getElementById('resetar-error');
+      const sucessoDiv = document.getElementById('resetar-sucesso');
+
+      if (senhaAtual !== senhaAdminAtual) {
+        erroDiv.textContent = '❌ Senha atual incorreta!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      if (novaSenha.length < 6) {
+        erroDiv.textContent = '❌ Nova senha deve ter pelo menos 6 caracteres!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      if (novaSenha !== confirmaSenha) {
+        erroDiv.textContent = '❌ As senhas não coincidem!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      senhaAdminAtual = novaSenha;
+      sucessoDiv.textContent = '✅ Senha alterada com sucesso!';
+      sucessoDiv.classList.remove('hidden');
+      erroDiv.classList.add('hidden');
+
+      setTimeout(() => {
+        fecharModalResetarSenha();
+      }, 1500);
+    });
+
+    document.getElementById('btn-adicionar-usuario').addEventListener('click', () => {
+      document.getElementById('modal-adicionar-usuario').classList.remove('hidden');
+    });
+
+    document.getElementById('nivel-acesso-usuario').addEventListener('change', (e) => {
+      const nivel = e.target.value;
+      const permissoesSection = document.getElementById('permissoes-section');
+      
+      if (nivel === 'gestao') {
+        permissoesSection.classList.remove('hidden');
+        document.getElementById('perm-resetar-senha').checked = true;
+        document.getElementById('perm-deletar-usuario').checked = true;
+        document.getElementById('perm-agendar').checked = true;
+      } else {
+        permissoesSection.classList.add('hidden');
+        document.getElementById('perm-resetar-senha').checked = false;
+        document.getElementById('perm-deletar-usuario').checked = false;
+        document.getElementById('perm-agendar').checked = false;
+      }
+    });
+
+    document.getElementById('form-adicionar-usuario').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('novo-nome-usuario').value.trim();
+      const email = document.getElementById('novo-email-usuario').value.trim();
+      const user = document.getElementById('novo-user-usuario').value.trim();
+      const senha = document.getElementById('nova-senha-usuario').value;
+      const nivel = document.getElementById('nivel-acesso-usuario').value;
+      const erroDiv = document.getElementById('adicionar-error');
+      const sucessoDiv = document.getElementById('adicionar-sucesso');
+
+      if (!nome || !email || !user || !senha || !nivel) {
+        erroDiv.textContent = '❌ Preencha todos os campos!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      const usuarioExiste = usuariosAdicionados.some(u => u.user === user);
+      if (usuarioExiste) {
+        erroDiv.textContent = '❌ Este usuário já existe!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      const permissoes = {
+        resetarSenha: document.getElementById('perm-resetar-senha').checked,
+        deletarUsuario: document.getElementById('perm-deletar-usuario').checked,
+        agendar: document.getElementById('perm-agendar').checked
+      };
+
+      usuariosAdicionados.push({ nome, email, user, senha, nivel, permissoes });
+      sucessoDiv.textContent = `✅ Usuário ${nome} adicionado com sucesso!`;
+      sucessoDiv.classList.remove('hidden');
+      erroDiv.classList.add('hidden');
+
+      setTimeout(() => {
+        fecharModalAdicionarUsuario();
+      }, 1500);
+    });
+
+    document.getElementById('btn-importar-csv').addEventListener('click', () => {
+      document.getElementById('modal-importar-csv').classList.remove('hidden');
+    });
+
+    document.getElementById('form-importar-csv').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const arquivoInput = document.getElementById('arquivo-csv');
+      const arquivo = arquivoInput.files[0];
+      const erroDiv = document.getElementById('csv-error');
+      const sucessoDiv = document.getElementById('csv-sucesso');
+      const processandoDiv = document.getElementById('csv-processando');
+      const btnEnviar = document.getElementById('btn-enviar-csv');
+
+      erroDiv.classList.add('hidden');
+      sucessoDiv.classList.add('hidden');
+      processandoDiv.classList.remove('hidden');
+      btnEnviar.disabled = true;
+
+      if (!arquivo) {
+        processandoDiv.classList.add('hidden');
+        erroDiv.textContent = '❌ Selecione um arquivo!';
+        erroDiv.classList.remove('hidden');
+        btnEnviar.disabled = false;
+        return;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = async (event) => {
+        try {
+          let csv = event.target.result;
+          
+          if (csv.charCodeAt(0) === 0xFEFF) csv = csv.slice(1);
+          csv = csv.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+          
+          const linhas = csv.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+
+          if (linhas.length === 0) {
+            processandoDiv.classList.add('hidden');
+            erroDiv.textContent = '❌ Arquivo vazio!';
+            erroDiv.classList.remove('hidden');
+            btnEnviar.disabled = false;
+            return;
+          }
+
+          let contagem = 0;
+          let inicio = 0;
+
+          const primeiraLinha = linhas[0].toLowerCase();
+          let separador = ',';
+          
+          if (primeiraLinha.includes(';')) {
+            separador = ';';
+          }
+          
+          if (primeiraLinha.includes('nome') || primeiraLinha.includes('email')) {
+            inicio = 1;
+          }
+
+          for (let i = inicio; i < linhas.length; i++) {
+            const linha = linhas[i];
+            const partes = linha.split(separador).map(p => p.trim());
+            
+            if (partes.length < 2) continue;
+            
+            const nome = partes[0];
+            const email = partes[1];
+            
+            if (nome && email && email.includes('@')) {
+              const result = await window.dataSdk.create({
+                tipo: 'professor',
+                nome: nome,
+                email: email
+              });
+              
+              if (result.isOk) {
+                contagem++;
+              }
+            }
+          }
+
+          processandoDiv.classList.add('hidden');
+
+          if (contagem > 0) {
+            sucessoDiv.textContent = `✅ ${contagem} professor(es) importado(s)!`;
+            sucessoDiv.classList.remove('hidden');
+            setTimeout(() => fecharModalImportarCSV(), 2000);
+          } else {
+            erroDiv.textContent = '❌ Nenhum professor foi importado! Verifique o formato.';
+            erroDiv.classList.remove('hidden');
+            btnEnviar.disabled = false;
+          }
+        } catch (err) {
+          processandoDiv.classList.add('hidden');
+          erroDiv.textContent = `❌ Erro: ${err.message}`;
+          erroDiv.classList.remove('hidden');
+          btnEnviar.disabled = false;
+        }
+      };
+
+      reader.readAsText(arquivo, 'UTF-8');
+    });
+
+    document.getElementById('form-resetar-prof').addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!professorSelecionado) return;
+
+      const novaSenha = document.getElementById('nova-senha-prof').value.trim();
+      const erroDiv = document.getElementById('resetar-prof-error');
+      const sucessoDiv = document.getElementById('resetar-prof-sucesso');
+
+      if (!novaSenha) {
+        erroDiv.textContent = '❌ Preencha a nova senha!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      senhasProf[professorSelecionado.__backendId] = novaSenha;
+      sucessoDiv.textContent = `✅ Senha de ${professorSelecionado.nome} alterada!`;
+      sucessoDiv.classList.remove('hidden');
+      erroDiv.classList.add('hidden');
+
+      setTimeout(() => {
+        fecharModalResetarProf();
+      }, 1500);
+    });
+
+    document.getElementById('form-agendar-prof').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!professorSelecionado) return;
+
+      const data = document.getElementById('agendar-data').value;
+      const aulas = document.getElementById('agendar-aulas').value;
+      const projetor = document.getElementById('agendar-projetor').value;
+      const som = document.getElementById('agendar-som').value;
+      const erroDiv = document.getElementById('agendar-error');
+      const sucessoDiv = document.getElementById('agendar-sucesso');
+
+      if (!data || !projetor) {
+        erroDiv.textContent = '❌ Preencha os campos obrigatórios!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+        return;
+      }
+
+      const mes = new Date(data + 'T12:00:00').getMonth() + 1;
+
+      const result = await window.dataSdk.create({
+        professor: professorSelecionado.nome,
+        email: professorSelecionado.email,
+        data: data,
+        mes: mes,
+        aulas: parseInt(aulas),
+        projetor: projetor,
+        som: som || ''
+      });
+
+      if (result.isOk) {
+        sucessoDiv.textContent = `✅ Agendamento criado para ${professorSelecionado.nome}!`;
+        sucessoDiv.classList.remove('hidden');
+        erroDiv.classList.add('hidden');
+        setTimeout(() => {
+          fecharModalAgendarProf();
+        }, 1500);
+      } else {
+        erroDiv.textContent = '❌ Erro ao criar agendamento!';
+        erroDiv.classList.remove('hidden');
+        sucessoDiv.classList.add('hidden');
+      }
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      usuarioLogado = null;
+      tipoUsuario = null;
+      document.getElementById('app-container').classList.add('hidden');
+      document.getElementById('admin-section').classList.add('hidden');
+      document.getElementById('professor-section').classList.add('hidden');
+      document.getElementById('gestao-section').classList.add('hidden');
+      document.getElementById('modal-login-inicio').classList.remove('hidden');
+    });
+
+    document.getElementById('filtro-professor-admin').addEventListener('input', aplicarFiltrosAdmin);
+    document.getElementById('filtro-mes-admin').addEventListener('change', aplicarFiltrosAdmin);
+    document.getElementById('filtro-data-admin').addEventListener('change', aplicarFiltrosAdmin);
+
+    initSDK();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9ce0c28bf0abd283',t:'MTc3MTExNjA5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
